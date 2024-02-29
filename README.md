@@ -8,9 +8,9 @@
 ```
 git clone https://github.com/pangguattn/smooth-talk-squad-backend.git
 ```
-2. Create the virtual environment
+2. Switch the virtual environment
 ```
-pyenv virtualenv 3.10.6 Smooth-Talk-Squad
+pyenv activate Smooth-Talk-Squad
 ```
 
 3. Install dependencies from requirements.txt
