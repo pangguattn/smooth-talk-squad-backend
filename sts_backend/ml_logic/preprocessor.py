@@ -1,16 +1,35 @@
+
 import numpy as np
 import pandas as pd
-
+import os
+from tqdm import tqdm
 from colorama import Fore, Style
+import librosa
 
-from sklearn.pipeline import make_pipeline
-from sklearn.compose import ColumnTransformer, make_column_transformer
-from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+# from sklearn.pipeline import make_pipeline
+# from sklearn.compose import ColumnTransformer, make_column_transformer
+# from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
 
-from taxifare.ml_logic.encoders import transform_time_features, transform_lonlat_features, compute_geohash
+def preprocess_features() -> np.ndarray:
 
+    mfcc_features = []
+    directory = os.path.join(os.pardir,'audio','splits')
+    # directory = os.path.join(os.pardir,os.pardir)
+    print(directory)
+    for clip in tqdm(os.listdir(directory)):
+        audio, sample_rate = librosa.load(os.path.join(directory, clip) , sr=8000)
+        mfccs = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=20)
+        if mfccs.shape == (20,47):
+            mfcc_features.append(mfccs)
+        else:
+            print(f"{clip}:{mfccs.shape}")
+        print(clip)
+    x_mfcc = np.stack(mfcc_features)
+    print(x_mfcc.shape)
+    return x_mfcc
 
-def preprocess_features(X: pd.DataFrame) -> np.ndarray:
+preprocess_features()
+
     # def create_sklearn_preprocessor() -> ColumnTransformer:
     #     """
     #     Scikit-learn pipeline that transforms a cleaned dataset of shape (_, 7)
@@ -106,4 +125,3 @@ def preprocess_features(X: pd.DataFrame) -> np.ndarray:
     # print("✅ X_processed, with shape", X_processed.shape)
 
     # return X_processed
-    pass
