@@ -1,0 +1,13 @@
+README.md
+setup.py
+Smooth_Talk_Squad.egg-info/PKG-INFO
+Smooth_Talk_Squad.egg-info/SOURCES.txt
+Smooth_Talk_Squad.egg-info/dependency_links.txt
+Smooth_Talk_Squad.egg-info/not-zip-safe
+Smooth_Talk_Squad.egg-info/requires.txt
+Smooth_Talk_Squad.egg-info/top_level.txt
+sts_backend/__init__.py
+sts_backend/params.py
+sts_backend/utils.py
+sts_backend/api/__init__.py
+sts_backend/api/fast.py
