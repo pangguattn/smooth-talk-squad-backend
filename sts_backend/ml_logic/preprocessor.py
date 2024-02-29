@@ -25,10 +25,10 @@ def preprocess_features() -> np.ndarray:
             print(f"{clip}:{mfccs.shape}")
         print(clip)
     x_mfcc = np.stack(mfcc_features)
-    print(x_mfcc.shape)
+
     return x_mfcc
 
-preprocess_features()
+
 
     # def create_sklearn_preprocessor() -> ColumnTransformer:
     #     """
