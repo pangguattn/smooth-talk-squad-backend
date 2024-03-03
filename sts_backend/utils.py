@@ -1,6 +1,7 @@
 import time
 import tracemalloc
-from taxifare.params import *
+from sts_backend.params import *
+import os
 
 def simple_time_and_memory_tracker(method):
 
@@ -23,3 +24,16 @@ def simple_time_and_memory_tracker(method):
         return result
 
     return method_with_trackers
+
+
+
+def delete_files_in_directory(directory_path):
+   try:
+     files = os.listdir(directory_path)
+     for file in files:
+       file_path = os.path.join(directory_path, file)
+       if os.path.isfile(file_path):
+         os.remove(file_path)
+     print(f"All files in {directory_path} deleted successfully.")
+   except OSError:
+     print("Error occurred while deleting files.")
