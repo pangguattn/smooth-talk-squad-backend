@@ -43,19 +43,11 @@ async def predict(file: UploadFile = File(...)):
     y_pred = model.predict(X_processed)
     print(f"predict:{y_pred}") # Keep for debugging purpose
 
-    # Response contents
-    threshold = 0.6 # TO DISCUSS
-    if any(y > threshold for y in y_pred):
-        params = {"isStutter" : 1}
-    else:
-        params = {"isStutter" : 0}
-    print(params)
-
     # Remove audio files
     delete_files_in_directory(UPLOAD_DIRECTORY)
     delete_files_in_directory(SPLITS_DIRECTORY)
 
-    return params
+    return y_pred.tolist()
 
 @app.get("/")
 def root():
