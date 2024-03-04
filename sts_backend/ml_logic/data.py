@@ -1,10 +1,11 @@
 import pandas as pd
-
+import numpy as np
+import pickle
 from google.cloud import bigquery
 from colorama import Fore, Style
 from pathlib import Path
 
-from taxifare.params import *
+from sts_backend.params import *
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -37,3 +38,19 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # print("✅ data cleaned")
 
     return df
+
+def get_data_with_cache(cache_path:Path) -> np.ndarray:
+    """
+    Retrieve `query` data from BigQuery, or from `cache_path` if the file exists
+    Store at `cache_path` if retrieved from BigQuery for future use
+    """
+    if cache_path.is_file():
+        print(Fore.BLUE + "\nLoad data from local pickle..." + Style.RESET_ALL)
+        """new code"""
+        with open(cache_path, 'rb') as file:
+            data = pickle.load(file)
+        print(f"✅ Data loaded, with shape {data.shape}")
+        return data
+    else:
+        print("There is no file.")
+        return None

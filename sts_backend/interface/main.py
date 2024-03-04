@@ -1,27 +1,26 @@
-# import numpy as np
-# import pandas as pd
+import numpy as np
+import pandas as pd
 
-# from pathlib import Path
-# from colorama import Fore, Style
-# from dateutil.parser import parse
+from pathlib import Path
+from colorama import Fore, Style
+from dateutil.parser import parse
 
-# from sts_backend.params import *
+from sts_backend.params import *
 # from sts_backend.ml_logic.data import get_data_with_cache, clean_data, load_data_to_bq
 # from sts_backend.ml_logic.model import initialize_model, compile_model, train_model, evaluate_model
 # from sts_backend.ml_logic.preprocessor import preprocess_features
 # from sts_backend.ml_logic.registry import load_model, save_model, save_results
 # from sts_backend.ml_logic.registry import mlflow_run, mlflow_transition_model
 
-# def preprocess() -> None:
+def preprocess() -> None:
 #     """
-#     - Query the raw dataset from Le Wagon's BigQuery dataset
 #     - Cache query result as a local CSV if it doesn't exist locally
 #     - Process query data
 #     - Store processed data on your personal BQ (truncate existing table if it exists)
 #     - No need to cache processed data as CSV (it will be cached when queried back from BQ during training)
 #     """
 
-#     print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess" + Style.RESET_ALL)
+    print(Fore.MAGENTA + "\n ⭐️ Use case: preprocess" + Style.RESET_ALL)
 
 #     # Query raw data from BigQuery using `get_data_with_cache`
 #     min_date = parse(min_date).strftime('%Y-%m-%d') # e.g '2009-01-01'
@@ -35,13 +34,8 @@
 #     """
 
 #     # Retrieve data using `get_data_with_cache`
-#     data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", f"query_{min_date}_{max_date}_{DATA_SIZE}.csv")
-#     data_query = get_data_with_cache(
-#         query=query,
-#         gcp_project=GCP_PROJECT,
-#         cache_path=data_query_cache_path,
-#         data_has_header=True
-#     )
+    data_query_cache_path = Path(LOCAL_DATA_PATH).joinpath("raw", f"mo")
+    data_query = get_data_with_cache(cache_path=data_query_cache_path)
 
 #     # Process data
 #     data_clean = clean_data(data_query)

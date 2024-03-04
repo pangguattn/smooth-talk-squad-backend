@@ -1,3 +1,6 @@
+tensorflow
+black
+phonet
 librosa
 wheel
 nbresult
