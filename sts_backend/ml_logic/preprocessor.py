@@ -6,7 +6,7 @@ import librosa
 def preprocess_features() -> np.ndarray:
 
     mfcc_features = []
-    directory = os.path.join(os.pardir,'audio','splits')
+    directory = os.path.join('sts_backend','audio','splits')
 
     for clip in tqdm(os.listdir(directory)):
         audio, sample_rate = librosa.load(os.path.join(directory, clip) , sr=8000)

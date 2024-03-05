@@ -4,6 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sts_backend.audio.splitter import splitter
 import os
 import numpy as np
+from sts_backend.ml_logic.registry import load_model
+from sts_backend.ml_logic.preprocessor import preprocess_features
+from sts_backend.utils import delete_files_in_directory
 
 app = FastAPI()
 
@@ -17,6 +20,7 @@ app.add_middleware(
 )
 
 UPLOAD_DIRECTORY = os.path.join("sts_backend","audio","uploads")
+SPLITS_DIRECTORY = os.path.join("sts_backend","audio","splits")
 
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
@@ -31,12 +35,19 @@ async def predict(file: UploadFile = File(...)):
         buffer.write(await file.read())
     splitter(file.filename, file_location)
 
-    #### FOR LOOP splits folder and RUN THE MODEL HERE ####
+    # Load model
+    model = load_model()
+    assert model is not None
+    model.summary() # Keep for debugging purpose
+    X_processed = preprocess_features()
+    y_pred = model.predict(X_processed)
+    print(f"predict:{y_pred}") # Keep for debugging purpose
 
-    # The audio clips are in splits folder
-    return {"filename": file.filename, "file_location": file_location}
+    # Remove audio files
+    delete_files_in_directory(UPLOAD_DIRECTORY)
+    delete_files_in_directory(SPLITS_DIRECTORY)
 
-
+    return y_pred.tolist()
 
 @app.get("/")
 def root():

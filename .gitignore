@@ -33,3 +33,6 @@ mlruns
 # Audio Files
 sts_backend/audio/splits/*
 sts_backend/audio/uploads/*
+
+# Python cache
+**/__pycache__/
