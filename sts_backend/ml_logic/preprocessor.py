@@ -4,6 +4,10 @@ from tqdm import tqdm
 import librosa
 import pandas as pd
 
+# You have to create these folders manually
+OUT_DATA_FILEPATH =  os.path.join(os.pardir, 'output_data', 'processed_sep28k_fluencybank_labels.csv')
+AUDIO_DIRECTORY = os.path.join(os.pardir,os.pardir, 'clips_test') # Clips folder should not in Smooth-Talk-Squad folder. It might mess up git because it is too big.
+
 def preprocess_features() -> np.ndarray:
 
     mfcc_features = []
@@ -22,7 +26,7 @@ def preprocess_features() -> np.ndarray:
     return x_mfcc
 
 def preprocess_csv_data() -> None:
-    # :oad the raw data from csv file
+    # Load the raw data from csv file
     data_sep28k_labels = pd.read_csv('../raw_data/SEP-28k_labels.csv', dtype={'EpId':str})
     fluencybank_labels = pd.read_csv('../raw_data/fluencybank_labels.csv', dtype={'EpId':str})
     fluencybank_labels["EpId"] = fluencybank_labels["EpId"].str.strip()
@@ -67,5 +71,45 @@ def preprocess_csv_data() -> None:
     data_sep28k_labels = data_sep28k_labels[data_sep28k_labels["Name"].str.contains('StutteringIsCool') == False]
 
     # Output Processed data_sep28k_labels into csv file
-    output_data_directory = os.path.join(os.pardir, 'output_data') # You have to create this folder manually
-    data_sep28k_labels.to_csv(os.path.join(output_data_directory, 'processed_sep28k_fluencybank_labels.csv'))
+    data_sep28k_labels.to_csv(OUT_DATA_FILEPATH)
+
+
+def preprocess_training_data() :
+    preprocessed_csv = pd.read_csv(OUT_DATA_FILEPATH)
+    clips_list = list(preprocessed_csv["Name"])
+
+    features=[]
+    y_two_reviewer_list =[]
+    y_stutter_feature_list = pd.DataFrame([])
+    clip_name_list = []
+
+    for filename in tqdm(os.listdir(AUDIO_DIRECTORY)):
+        filename = filename[:-4] # Remove file extension (.wav in our situation)
+        if clips_list.count(filename) > 0:
+                audio, sample_rate = librosa.load(os.path.join(AUDIO_DIRECTORY, filename) + '.wav', sr=8000)
+                mfccs = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=20)
+
+                if mfccs.shape == (20,47):
+                    # mfcc
+                    features.append(mfccs)
+
+                    # stutter flag
+                    y_two_reviewer = preprocessed_csv[preprocessed_csv["Name"] == filename]["isStutter_by_2_more_reviewers"]
+                    y_two_reviewer_list.append(y_two_reviewer.astype(int))
+
+                    # stutter features
+                    y_stutter_feature = preprocessed_csv[preprocessed_csv["Name"] == filename][['ProlongationEncoded', 'BlockEncoded', 'SoundRepEncoded', 'WordRepEncoded']]
+                    y_stutter_feature_list = pd.concat([y_stutter_feature_list, y_stutter_feature])
+
+                    # clip names
+                    clip_name = preprocessed_csv[preprocessed_csv["Name"] == filename]["Name"]
+                    clip_name_list.append(clip_name)
+                else:
+                    print(f"{filename}:{mfccs.shape}")
+
+    x_mfcc = np.stack(features)
+    y_two_reviewer_np = np.array(y_two_reviewer_list)
+    y_stutter_feature_np = np.array(y_stutter_feature_list)
+    clip_name_list_np = np.array(clip_name_list)
+
+    return x_mfcc, y_two_reviewer_np, y_stutter_feature_np, clip_name_list_np
