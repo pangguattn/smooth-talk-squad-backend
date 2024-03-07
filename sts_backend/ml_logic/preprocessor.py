@@ -89,6 +89,8 @@ def preprocess_training_data() :
                 audio, sample_rate = librosa.load(os.path.join(AUDIO_DIRECTORY, filename) + '.wav', sr=8000)
                 mfccs = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=20)
 
+                # Some mfccs.shape is not (20, 47) because the file is rather smaller
+                # For future development, maybe we can add padding (maybe ??)
                 if mfccs.shape == (20,47):
                     # mfcc
                     features.append(mfccs)
